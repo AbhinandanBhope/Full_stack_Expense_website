@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>User List</title>
+  </head>
+  <body>
+    <a href="/addUser" class="btn" >Add User</a>
+    <h1>User List</h1>
+    <% rows.forEach((row) => { %>
+      <p>ID: <%= row.id %> - Phone: <%= row.Phone %> - Name: <%= row.Name %>  - Gmail: <%= row.gmail %></p>
+    
+      <a href="/delete/<%= row.id %>" class="btn" >Delete</a>
+    <% }); %>
+  </body>
+</html>
