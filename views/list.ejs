@@ -4,10 +4,10 @@
     <title>User List</title>
   </head>
   <body>
-    <a href="/addUser" class="btn" >Add User</a>
-    <h1>User List</h1>
+    <a href="/addUser" class="btn" >Add Expense</a>
+    <h1>Expense List</h1>
     <% rows.forEach((row) => { %>
-      <p>ID: <%= row.id %> - Phone: <%= row.Phone %> - Name: <%= row.Name %>  - Gmail: <%= row.gmail %></p>
+      <p>ID: <%= row.id %> - Title: <%= row.title %> - Cost: <%= row.price %> </p>
     
       <a href="/delete/<%= row.id %>" class="btn" >Delete</a>
     <% }); %>
