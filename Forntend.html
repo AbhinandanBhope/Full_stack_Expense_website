@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="public/forms.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+</head>
+<body>
+  
+    
+
+    <center>
+      <div class="box">
+            
+        <div class="">
+            <p class=""><h3>Name</h3></p>
+            <input type="text" name="Name" id="Name">
+            <p class=""><h3>Price</h3></p>
+            <input type="text" name="price" id="price">
+            <p class=""><h3>Quantity</h3></p>
+            <input type="text" name="quantity" id="quantity">
+          </div>
+          <div class="distance">
+            
+          </div>
+            <div>
+              <button type="button" class="btn btn-info" onclick="UserADD(event)">Add Product</button>
+
+            
+            <label></label>
+          </div>
+        </div>
+      </center>
+        
+      <center>
+    <h1>List</h1>
+    <div id="Pro"> 
+      
+    </div>
+   
+    
+    </center>
+ 
+ <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+  
+
+ <Script>
+   showAllProducts()
+  async function UserADD(event) {
+   
+
+    event.preventDefault();
+  
+    const Name1 = document.getElementById('Name').value;
+            const quant1 = document.getElementById('quantity').value;
+            const price1 = document.getElementById('price').value;
+            document.getElementById('Name').value ="";
+             document.getElementById('quantity').value ="";
+              document.getElementById('price').value="";
+            
+     const obj ={
+      Name1,
+      price1,
+      quant1
+     };
+
+    
+
+      
+     axios.post('http://localhost:4000/add',obj)
+.then(response => {
+  
+  const obj = response.data;
+  //showOutput(obj) ;
+  showAllProducts();
+
+  
+  
+  
+})
+.catch(error => {
+  
+  console.log(error);
+  console.log("hellow");
+});
+  } 
+
+    
+    
+
+    async function showAllProducts() {
+      
+        axios.get('http://localhost:4000/list')
+  .then(response => {
+    
+    const obj2 = response.data;
+    showOutput(obj2) ;
+    console.log
+
+
+    
+    
+    
+  })
+  .catch(error => {
+    
+    console.log(error);
+  });
+  
+  function showOutput(obj2) {
+    console.log(obj2);
+    
+    
+    
+    const Pro = document.getElementById('Pro');
+            Pro.innerHTML = '';
+
+            obj2.forEach(item => {
+                const li = document.createElement('h4');
+                const iTEMMS = document.createTextNode("Name= "+item.Name +" Quantity= "+item.quantity +" Price= "+item.price+"  ");
+                const deleteBtn = document.createElement('button')
+                deleteBtn.classList.add('button');
+                
+                const BuyBtn = document.createElement('button');
+                const BuyBtn2 = document.createElement('button');
+                const BuyBtn3= document.createElement('button');
+                BuyBtn.appendChild(document.createTextNode('Buy 1'));
+                BuyBtn3.appendChild(document.createTextNode('Buy 2'));
+                BuyBtn2.appendChild(document.createTextNode('Buy 3 '));
+                BuyBtn.classList.add('button');
+                BuyBtn2.classList.add('button');
+                BuyBtn3.classList.add('button');
+                const Space = document.createElement('div');
+                Space.classList.add =("distance")
+                deleteBtn.appendChild(document.createTextNode('Delete'));
+
+                deleteBtn.addEventListener('click', () => {
+                    deleteItem(item);
+                    console.log(item);
+
+                });
+                
+                BuyBtn.addEventListener('click', () => {
+                  if(item.quantity==1){
+                    deleteItem(item);
+                    
+
+
+                  }
+                  
+                    BuyItem(item , 1);
+                    console.log(item);
+                });
+                BuyBtn2.addEventListener('click', () => {
+                  if(item.quantity==3){
+                    deleteItem(item);
+                    
+
+                  }
+                  
+                    BuyItem(item ,3);
+                    console.log(item);
+                });
+                BuyBtn3.addEventListener('click', () => {
+                  if(item.quantity==2){
+                    deleteItem(item);
+                    
+
+                  }
+                    BuyItem(item ,2);
+                    console.log(item );
+                });
+                
+                
+
+                li.appendChild(iTEMMS);
+                li.appendChild(deleteBtn);
+                
+                li.appendChild(BuyBtn);
+                if(item.quantity >= 3){
+                  li.appendChild(BuyBtn3);
+                  li.appendChild(BuyBtn2);
+               
+                }
+                else if(item.quantity >= 2){
+                
+                  li.appendChild(BuyBtn3);
+
+                }
+
+               
+                li.appendChild(Space);
+                Pro.appendChild(li);
+            });
+
+          async  function  deleteItem(item) {
+            try{
+           const response = await axios.delete('http://localhost:4000/delete/:' + item.id)
+                
+                    console.log('Successfully deleted item:', item);
+                    console.log(response);
+                    
+                    showAllProducts();
+                    
+            }
+                
+                catch (error)  {
+                    console.log('Error deleting item:', item);
+                    console.log(error);
+                };
+        } 
+        async  function  BuyItem(item , quant) {
+            try{ 
+              const response = await axios.put(`http://localhost:4000/update/${item.id}/${item.quantity}/${quant}`);
+
+                
+                    console.log('Successfully deleted item:', item);
+                    console.log(response);
+                    
+                    showAllProducts();
+                    
+            }
+                
+                catch (error)  {
+                  
+                    console.log('Error deleting item:', item);
+                    console.log(error);
+                };
+        } 
+      }
+    }
+
+
+   
+   
+  
+   
+    
+    
+
+
+        
+    
+ </Script>
+    
+</body>
+</html>

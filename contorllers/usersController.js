@@ -1,51 +1,108 @@
-// usersController.js
+
 
 const path = require('path');
-const db = require('../database');
+const sequelize = require('../database');
+const PRODUCT = require('../User');
+const bodyParser = require('body-parser');
 
-const getUsers = (req, res) => {
-  db.execute('SELECT * FROM expense')
-    .then((result) => {
-      const rows = result[0]; // Get the result rows
 
-      // Send the rows data to the list.html view
-      res.render('list', { rows });
-    })
-    .catch((err) => {
+const getUsers =  async function(req, res)  {
+  try{
+  
+    await PRODUCT.findAll().then((result) => {
+      const rows = result; 
+      res.json(rows);
+      
+    })}
+  
+    catch(err)  {
+      console.log(err)
+      
+    };
+    
+  };
+
+  const deleteUser = async function (req, res) {
+    
+    try {
+      const id1 = req.params.Id.replace(':', ''); 
+      await PRODUCT.destroy({ where: { id: id1 } });
+      res.send(`User with ID ${id1} has been deleted.`);
+    } catch (err) {
       console.log(err);
-      res.status(500).send('An error occurred');
-    });
-};
+      res.status(500).send('An error occurred while deleting the user.');
+    }
+  };
+  
+  
+  
 
-const deleteUser = (req, res) => {
+
+const UpdateUser = async function (req, res) {
+
+  try{
   const id = req.params.Id;
-  db.execute('DELETE FROM expense WHERE Id = ?', [id])
-    .then((result) => {
-      res.sendFile(path.join(__dirname, '../views/index.html'));
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
+  const q =req.params.quant;
+  if(req.params.quantity == 0){
+    
+    
+    
+    
+  }
+  else{
+  const updatedQuantity = req.params.quantity - q;
+  console.log(updatedQuantity);
+  const productG = await PRODUCT.findByPk(id);
+  if (!productG) {
+    return res.status(404).json({ error: 'User not found' });
+  }
 
-const addUser = (req, res) => {
-  res.sendFile(path.join(__dirname, '../views/index.html'));
-};
+  productG.quantity = updatedQuantity;
 
-const postUser = (req, res) => {
-  const { title, price } = req.body; // Destructure the title and price from req.body
+  
+  await productG.save();
+  res.status(201).json(productG);
+}
+  }
 
-  db.execute('INSERT INTO expense (title, price) VALUES (?, ?)', [title, price])
-    .then((result) => {
-      res.redirect('/list');
-    })
-    .catch((err) => {
+    catch(err) {
+
       console.log(err);
       res.status(500).send('An error occurred');
-    });
-};
+    };
+  
+}
 
 
-module.exports = { getUsers, deleteUser, addUser, postUser };
+
+const postUser = async function (req, res, next) {
+try {
+  const Name1 = req.body.Name1;
+  const price1 = req.body.price1;
+  const quantity1 = req.body.quant1;
+  
+  console.log(req.body);
+  
+    
+    console.log(Name1);
+    const data = await PRODUCT.create({
+      Name:Name1,
+      price:price1,
+      quantity:quantity1
+    
+  
+  
+      
+  
+     })
+     res.status(201).json({data})
+    }
+  catch(err){
+    console.log(err)
+  }
+}
+
+
+module.exports = { getUsers, deleteUser, postUser, UpdateUser };
 
   

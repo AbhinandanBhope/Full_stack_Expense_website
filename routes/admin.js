@@ -2,11 +2,13 @@
 
 const express = require('express');
 const router = express.Router();
+const bodyParser = require('body-parser');
 const usersController = require('../contorllers/usersController');
 
 router.get('/list', usersController.getUsers);
-router.get('/delete/:Id', usersController.deleteUser);
-router.get('/addUser', usersController.addUser);
-router.post('/', usersController.postUser);
+router.delete('/delete/:Id', usersController.deleteUser);
+router.put('/Update/:Id/:quantity/:quant', usersController.UpdateUser);
+
+router.post('/add', usersController.postUser);
 
 module.exports = router;
